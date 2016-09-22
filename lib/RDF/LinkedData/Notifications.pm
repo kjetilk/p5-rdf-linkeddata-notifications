@@ -62,6 +62,14 @@ Returns or sets the base URI for this handler.
 
 has base_uri => (is => 'rw', isa => Str, default => '' );
 
+=item C<< inbox_path >>
+
+Returns or sets the base URI for this handler.
+
+=cut
+
+has inbox_path => (is => 'rw', isa => Str, default => '' );
+
 
 =item C<< request ( [ $request ] ) >>
 
@@ -72,6 +80,14 @@ Returns the L<Plack::Request> object if it exists or sets it if a L<Plack::Reque
 has request => ( is => 'rw', isa => InstanceOf['Plack::Request']);
 
 sub discover {
+  my $self = shift;
+  my $req = $self->request;
+  my $res = Plack::Response->new(200);
+  $res->headers({Link => '<'.$self->base_uri . $self->inbox_path . '>; rel="http://www.w3.org/ns/ldp#inbox"',
+					  "Content-Type" => "text/turtle" });
+  $res->body('<> <http://www.w3.org/ns/ldp#inbox> <'.$self->base_uri . $self->inbox_path . '> .');
+  return $res;
+}
 
 1;
 

@@ -8,6 +8,8 @@ use Plack::Builder;
 use Config::JFDI;
 use Carp qw(confess);
 use HTTP::Headers;
+use RDF::LinkedData::Notifications;
+
 
 =head1 NAME
 
@@ -37,18 +39,17 @@ BEGIN {
 
 #my $linkeddata = Plack::App::RDF::LinkedData->new();
 
+my $ldn = RDF::LinkedData::Notifications->new(base_uri => $config->{base_uri},
+															 inbox_path => $config->{inbox_path},
+															 store => $config->{store});
 #$linkeddata->configure($config);
 
 #my $rdf_linkeddata = $linkeddata->to_app;
 
 my $ldn_app = sub {
   my $env = shift;
-  my $req = Plack::Request->new($env);
-  my $res = Plack::Response->new(200);
-  $res->headers({Link => '<'.$config->{base_uri} . $config->{inbox_path} . '>; rel="http://www.w3.org/ns/ldp#inbox"',
-					  "Content-Type" => "text/turtle" });
-  $res->body('<> <http://www.w3.org/ns/ldp#inbox> <'.$config->{base_uri} . $config->{inbox_path} . '> .');
-  return $res->finalize;
+  $ldn->request(Plack::Request->new($env));
+  return $ldn->discover->finalize;
 };
 
 builder {
