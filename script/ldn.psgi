@@ -48,8 +48,15 @@ my $ldn = RDF::LinkedData::Notifications->new(base_uri => $config->{base_uri},
 
 my $ldn_app = sub {
   my $env = shift;
-  $ldn->request(Plack::Request->new($env));
-  return $ldn->discover->finalize;
+  my $req = Plack::Request->new($env);
+  $ldn->request($req);
+  if ($req->path eq $config->{inbox_path}) {
+  } else {
+	 unless (($req->method eq 'GET') || ($req->method eq 'HEAD')) {
+		return [ 405, [ 'Content-type', 'text/plain' ], [ 'Method not allowed' ] ];
+	 }
+	 return $ldn->discover->finalize;
+  }
 };
 
 builder {
