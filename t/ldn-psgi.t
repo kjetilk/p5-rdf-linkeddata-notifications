@@ -45,5 +45,13 @@ Log::Any::Adapter->set($ENV{LOG_ADAPTER} || 'Stderr') if $ENV{TEST_VERBOSE};
 	 is($mech->content, '<> <http://www.w3.org/ns/ldp#inbox> <http://localhost/inbox/> .', 'Body is OK');
 }
 
+{
+    note "Head /test-static";
+    my $mech = Test::WWW::Mechanize::PSGI->new(app => $tester, requests_redirectable => []);
+    my $res = $mech->head("/test-static");
+    is($mech->status, 200, "Returns 200");
+    like($res->header('Link'), qr|<http://localhost/inbox/>;\srel=\"http://www.w3.org/ns/ldp\#inbox\"|, "LDN inbox URL is OK");
+}
+
 done_testing;
 
