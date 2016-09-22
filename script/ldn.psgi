@@ -51,6 +51,9 @@ my $ldn_app = sub {
   my $req = Plack::Request->new($env);
   $ldn->request($req);
   if ($req->path eq $config->{inbox_path}) {
+	 unless (($req->method eq 'GET') || ($req->method eq 'HEAD') || ($req->method eq 'POST')) {
+		return [ 405, [ 'Content-type', 'text/plain' ], [ 'Method not allowed' ] ];
+	 }
   } else {
 	 unless (($req->method eq 'GET') || ($req->method eq 'HEAD')) {
 		return [ 405, [ 'Content-type', 'text/plain' ], [ 'Method not allowed' ] ];
