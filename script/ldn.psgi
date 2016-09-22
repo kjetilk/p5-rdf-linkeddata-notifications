@@ -28,7 +28,8 @@ BEGIN {
   #                                       )) {
   if ($ENV{'PERLRDF_STORE'}) {
 	 $config->{store} = $ENV{'PERLRDF_STORE'};
-	 $config->{base_uri} = 'http://localhost/';
+	 $config->{base_uri} = 'http://localhost';
+	 $config->{inbox_path} = '/inbox/';
   } else {
 	 confess "Couldn't find config";
   }
@@ -42,9 +43,11 @@ BEGIN {
 
 my $ldn_app = sub {
   my $env = shift;
+  my $req = Plack::Request->new($env);
   my $res = Plack::Response->new(200);
-  $res->headers({Link => 'foo', "Content-type" => "text/plain" });
-  $res->body('foo');
+  $res->headers({Link => '<'.$config->{base_uri} . $config->{inbox_path} . '>; rel="http://www.w3.org/ns/ldp#inbox"',
+					  "Content-Type" => "text/turtle" });
+  $res->body('<> <http://www.w3.org/ns/ldp#inbox> <'.$config->{base_uri} . $config->{inbox_path} . '> .');
   return $res->finalize;
 };
 
