@@ -27,6 +27,7 @@ use Test::RDF;
 use Test::WWW::Mechanize::PSGI;
 use Module::Load::Conditional qw[can_load];
 
+
 my $tester = do "script/ldn.psgi";
 
 BAIL_OUT("The application is not running") unless ($tester);
@@ -41,7 +42,7 @@ Log::Any::Adapter->set($ENV{LOG_ADAPTER} || 'Stderr') if $ENV{TEST_VERBOSE};
     my $res = $mech->get("/test-static");
     is($mech->status, 200, "Returns 200");
     like($res->header('Link'), qr|<http://localhost/inbox/>;\srel=\"http://www.w3.org/ns/ldp\#inbox\"|, "LDN inbox URL is OK");
-	 like($res->header('Server'), qr|RDF::LinkedData::Notifications/$RDF::LinkedData::Notifications::VERSION|, 'Server header is there' );
+	 is($mech->content, '<> <http://www.w3.org/ns/ldp#inbox> <http://localhost/inbox/> .', 'Body is OK');
 }
 
 done_testing;
