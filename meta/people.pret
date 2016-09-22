@@ -1,0 +1,9 @@
+# This file contains data about the project developers.
+
+@prefix : <http://xmlns.com/foaf/0.1/>.
+
+cpan:KJETILK
+	:name  "Kjetil Kjernsmo";
+	:page  <https://metacpan.org/author/KJETILK>;
+	:mbox  <mailto:kjetilk@cpan.org>.
+
